@@ -29,6 +29,7 @@ Route::group(['controller' => DonorController::class], function () {
     Route::post('/storedonor', 'store');
     Route::delete('/destroydonor', 'destroy');
     Route::put('/updatedonor', 'update');
+    Route::get('/getdonateditems', 'getDonatedItems');
 });
 
 Route::group(['controller' => RecipientController::class], function () {

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 class Recipient extends Model
 {
@@ -14,7 +15,7 @@ class Recipient extends Model
         'contact_info',
     ];
 
-    public function foods() {
+    public function foods(): MorphToMany {
         return $this->morphToMany(Food::class,'foodable');
     }
 }

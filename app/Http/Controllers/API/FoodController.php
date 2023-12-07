@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\Donor;
 use App\Models\Food;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -28,11 +29,11 @@ class FoodController extends Controller
         if ($request->input('food_id')) {
             $food = Food::find($request->input('food_id'));
 
-            if (isset($food) && !empty($food)) {
+            if (isset($food) && !empty($food) && $food->count() > 0) {
                 return response()->json($food, SELF::STATUS_SUCCESS);
             }
             return response()->json(['message' => 'No data found'], self::STATUS_NOT_FOUND);
-        }else {
+        } else {
             $res = [
                 'status' => 'error',
                 'message' => 'food id field is required to locate resource',
@@ -51,6 +52,15 @@ class FoodController extends Controller
             if ($request->input('quantity')) $food['quantity'] = $request->input('quantity');
 
             $food = Food::create($food);
+
+            //attach food with donor if donor id is present in request and it exists
+            if ($request->input('donor_id')) {
+                $donor = Donor::find($request->input('donor_id'));
+
+                if (isset($donor) && !empty($donor) && $donor->count() > 0) {
+                    $food->donors()->attach($donor);
+                }
+            }
 
             $res = [
                 'status' => 'implemented',
@@ -79,6 +89,15 @@ class FoodController extends Controller
                 if ($request->input('quantity')) $updatedFood['quantity'] = $request->input('quantity');
 
                 if ($updatedFood) $food->update($updatedFood);
+
+                //attach food with donor if donor id is present in request and it exists
+                if ($request->input('donor_id')) {
+                    $donor = Donor::find($request->input('donor_id'));
+
+                    if (isset($donor) && !empty($donor) && $donor->count() > 0) {
+                        $food->donors()->attach($donor);
+                    }
+                }
 
                 $res = [
                     'status' => 'updated',
